@@ -1,0 +1,190 @@
+snippet lib
+	library(${1:package})
+
+snippet req
+	require(${1:package})
+
+snippet src
+	source("${1:file.R}")
+
+snippet ret
+	return(${1:code})
+
+snippet mat
+	matrix(${1:data}, nrow = ${2:rows}, ncol = ${3:cols})
+
+snippet sg
+	setGeneric("${1:generic}", function(${2:x, ...}) {
+		standardGeneric("${1:generic}")
+	})
+
+snippet sm
+	setMethod("${1:generic}", ${2:class}, function(${2:x, ...}) {
+		${0}
+	})
+
+snippet sc
+	setClass("${1:Class}", slots = c(${2:name = "type"}))
+
+snippet if
+	if (${1:condition}) {
+		${0}
+	}
+
+snippet el
+	else {
+		${0}
+	}
+
+snippet ei
+	else if (${1:condition}) {
+		${0}
+	}
+
+snippet fun
+	${1:name} <- function(${2:variables}) {
+		${0}
+	}
+
+snippet for
+	for (${1:variable} in ${2:vector}) {
+		${0}
+	}
+
+snippet while
+	while (${1:condition}) {
+		${0}
+	}
+
+snippet switch
+	switch (${1:object},
+		${2:case} = ${3:action}
+	)
+
+snippet apply
+	apply(${1:array}, ${2:margin}, ${3:...})
+
+snippet lapply
+	lapply(${1:list}, ${2:function})
+
+snippet sapply
+	sapply(${1:list}, ${2:function})
+
+snippet mapply
+	mapply(${1:function}, ${2:...})
+
+snippet tapply
+	tapply(${1:vector}, ${2:index}, ${3:function})
+
+snippet vapply
+	vapply(${1:list}, ${2:function}, FUN.VALUE = ${3:type}, ${4:...})
+
+snippet rapply
+	rapply(${1:list}, ${2:function})
+
+snippet ts
+	`r paste("#", date(), "------------------------------\n")`
+
+snippet shinyapp
+	library(shiny)
+	
+	ui <- fluidPage(
+	  ${0}
+	)
+	
+	server <- function(input, output, session) {
+	  
+	}
+	
+	shinyApp(ui, server)
+
+snippet shinymod
+	${1:name}_UI <- function(id) {
+	  ns <- NS(id)
+	  tagList(
+		${0}
+	  )
+	}
+	
+	${1:name} <- function(input, output, session) {
+	  
+	}
+
+snippet init_template
+	#' title
+	#' description
+	#' @file xxx.R
+	#' @author Mariko Ohtsuka
+	#' @date YYYY.MM.DD
+	rm(list=ls())
+	# ------ libraries ------
+	library(tidyverse)
+	library(here)
+	# ------ constants ------
+	kTestConstants <- NULL
+	# ------ functions ------
+	TestFunction <- function(){
+	
+	}
+	# ------ main ------
+
+snippet GetOsType
+	#' @title GetOsType
+	#' @description Get the OS type.
+	#' @param none.
+	#' @return A string of 'windows' or 'unix'.
+	GetOsType <- function(){
+		os <- .Platform$OS.type  # mac or windows
+		return(os)
+	}
+
+snippet read_write_template
+	#' @title readCsvSetEncoding
+	#' @description Reads a file with the specified encoding.
+	#' @param target_file Full path of the target file.
+	#' @param target_encoding Encoding to specify.
+	#' @return Returns a data frame. If the file fails to read, NA is returned.
+	readCsvSetEncoding <- function(target_file, target_encoding){
+	  temp <- tryCatch(
+	    read.csv(target_file, as.is=T, fileEncoding=target_encoding, stringsAsFactors=F, na.strings=c("", NA)),
+	    warning = function(e){ return(NA) }
+	  )
+	  return(temp)
+	}
+	#' @title RemoveLastBackslash
+	#' @description If the string of the specified file path ends with '\', remove the '\'.
+	#' @param input_path The path string.
+	#' @return String of the path with trailing backslashes removed.
+	RemoveLastBackslash <- function(input_path){
+	  temp_path <- ifelse(substr(input_path, nchar(input_path), nchar(input_path)) == '/',
+	                      substr(input_path, 1, nchar(input_path) - 1),
+	                      input_path)
+	  return(temp_path)
+	}
+	#' @title ReadTargetCsv
+	#' @description Read csv.
+	#' @param input_path The path where the CSV file is located.
+	#' @param target_path The folder path where the target file resides.
+	#' @param filename Target file name.
+	#' @return Returns a data frame. If the file fails to read, NA is returned.
+	ReadTargetCsv <- function(input_path, filename){
+	  temp_path <- RemoveLastBackslash(input_path)
+	  target <- file.path(temp_path, filename)
+	  temp <- readCsvSetEncoding(target, 'utf-8')
+	  if (!is.data.frame(temp)){
+	    temp <- readCsvSetEncoding(target, 'cp932')
+	  }
+	  if (!is.data.frame(temp)){
+	    temp <- readCsvSetEncoding(target, 'UTF-8-BOM')
+	  }
+	  return(temp)
+	}
+	#' @title WriteOutputCsv
+	#' @description Write csv.
+	#' @param df The data frame for output.
+	#' @param input_path The path to output CSV.
+	#' @param filename Name of the CSV.
+	#' @return none
+	WriteOutputCsv <- function(df, input_path, filename){
+	  write.table(df, paste0(input_path, '/', filename), , row.names=F, append=F, sep=',', na='""')
+	}
